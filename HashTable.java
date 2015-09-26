@@ -24,6 +24,8 @@ public class HashTable
 		boolean placed= false;
 		while( placed == false)
 		{
+			System.out.println("change: " + change)
+			System.out.println("spot: " + spot)
 			if (!(table[spot + change] instanceof Integer ))
 				change+=1;
 			else
@@ -55,6 +57,16 @@ public class HashTable
 	 		if (holder[j] instanceof Integer)
 	 			this.put(holder[j]);
 	 	}
+	 }
+	 
+	 public String toString()
+	 {
+	 	String s= "";
+	 	for (int i=0; i<table.length; i++)
+	 	{
+	 		s= s+ table[i] + "|";
+	 	}
+	 	return s;
 	 }
 	
 
