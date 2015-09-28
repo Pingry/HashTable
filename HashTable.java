@@ -1,20 +1,18 @@
-import java.util.ArrayList;
-
 public class HashTable
 {
-	private ArrayList<Object> table;
+	private Object[] table;
 	
 	//Initializes private variable table with size = 100
 	public HashTable()
 	{
-		table = new ArrayList<Object> (100);
+		table = new Object[100];
 		
 	}
 	
 	//Initializes private variable table with size = parameter capacity
 	public HashTable(int capacity)
 	{
-		table = new ArrayList<Object> (capacity);
+		table = new Object[capacity];
 	}
 	
 	//Puts parameter obj into table by putting it in the position of its hash code mod table's size. If there is already an object at that position,
@@ -22,25 +20,25 @@ public class HashTable
 	public void put (Object obj)
 	{
 		int num = obj.hashCode();
-		num = num%table.size();
+		num = num%table.length;
 		
-		if(table.get(num)!=null)
+		if(table[num]!=null)
 		{
-			table.set(num, obj);
+			table[num] = obj;
 		}
 		else
 		{
-			for(int i = num; i<table.size();i++)
+			for(int i = num; i<table.length;i++)
 			{
-				if(table.get(i)!=null)
+				if(table[i]!=null)
 				{
-					table.set(i, obj);
+					table[i]=obj;
 					return;
 				}
 			}
-			int size = table.size();
+			int size = table.length;
 			reHash();
-			table.set(size,obj);
+			table[size] = obj;
 			
 		}
 	}
@@ -48,9 +46,9 @@ public class HashTable
 	public String toString()
 	{
 		String str = "| ";
-		for(int i = 0; i<table.size(); i++)
+		for(int i = 0; i<table.length; i++)
 		{
-			str = str + table.get(i) + "| ";
+			str = str + table[i] + "| ";
 		}
 		return str;
 	}
@@ -59,10 +57,10 @@ public class HashTable
 	//then sets table ArrayList = copy ArrayList.
 	private void reHash()
 	{
-		ArrayList<Object> copy = new ArrayList<Object> (table.size()*2);
-		for(int i =0; i <table.size();i++)
+		Object[] copy = new Object[(table.length*2)];
+		for(int i =0; i <table.length;i++)
 		{
-			copy.set(i,table.get(i));
+			copy[i] = table[i];
 		}
 		table = copy;
 	}
