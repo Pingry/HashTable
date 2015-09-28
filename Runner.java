@@ -3,10 +3,14 @@ public class Runner
 
 	public static void main( String [] args )
 	{
-		HashTable h= new HashTable(Integer.parseInt(args[0]));
-		for (int i=0; i<Integer.parseInt(args[1]); i++)
+		HashTable h= new HashTable(7);
+		for (int i=0; i<5; i++)
+		{
 			h.put(new Object());
-		System.out.println(h.toString());
+			h.put("hello");
+		}
+
+		System.out.println(h);
 	}
 
 			

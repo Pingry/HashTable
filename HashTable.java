@@ -1,3 +1,5 @@
+import java.lang.Math;
+
 public class HashTable
 {
 	public static final double loadFactor = .6;
@@ -21,23 +23,28 @@ public class HashTable
 		int spot = (int)  o.hashCode();
 		System.out.println("Intial code is: " + spot);
 		spot=spot% table.length;
+		spot = Math.abs(spot);
 		System.out.println("Code after mod is: " + spot);
 		int change=0;
 		boolean placed= false;
-		while( placed == false)
+		while(placed == false)
 		{
+			int place=(spot + change)%table.length;
 			System.out.println("change: " + change);
 			System.out.println("spot: " + spot);
-			if (table[spot + change] instanceof Object )
-				change+=1;
+			if (table[place] instanceof Object )
+			{
+				if (change==0)
+					change+=1;
+				else
+					change=change*2;
+			}
 			else
 			{
-				table[spot + change] = o;
+				table[place] = o;
 				placed= true;
 				occupied+=1;
 			}
-			if (change+spot==table.length)
-				change= spot * -1;
 		}
 		/*
 		System.out.println("");
@@ -64,12 +71,25 @@ public class HashTable
 	 	{
 	 		holder[i]=table[i];
 	 	}
-	 	table= new Object[table.length * 2];
+	 	int biggerPrime= (table.length * 2) +1;
+	 	while (primeChecker(biggerPrime)==false)
+	 		biggerPrime+=2;
+	 	table= new Object[biggerPrime];
 	 	for ( int j=0; j<holder.length; j++)
 	 	{
 	 		if (holder[j] instanceof Object)
 	 			this.put(holder[j]);
 	 	}
+	 }
+	 
+	 private boolean primeChecker(int a)
+	 {
+	 	for (int x=2; x<((int) Math.sqrt(a))+1; x++)
+	 	{
+	 		if (a%x==0)
+	 			return false;
+	 	}
+	 	return true;
 	 }
 	 
 	 public String toString()
