@@ -16,11 +16,16 @@ public class HashTable
 	}
 	
 	//Puts parameter obj into table by putting it in the position of its hash code mod table's size. If there is already an object at that position,
-	//it puts it at the next opne space. If all spaces are filled, it rehashes using the rehash method, and places it in the next open position.
+	//it puts it at the next space. If that space is filled, then it uses quadraticProbing to place the object. If all spaces which quadratic probing  
+	//checked are filled, it rehashes using the rehash method, and places it in the position where quadraticProbing would put it. 
 	public void put (Object obj)
 	{
 		int num = obj.hashCode();
 		num = num%table.length;
+		if(num<0)
+		{
+			num+=table.length;
+		}
 		
 		if(table[num]==null)
 		{
@@ -28,17 +33,30 @@ public class HashTable
 		}
 		else
 		{
-			for(int i = num; i<table.length;i++)
-			{
+			int quadraticProber = 0;
+			int hold = 0;
+			for(int i = num; i<table.length;i+=quadraticProber)
+			{	
 				if(table[i]==null)
 				{
 					table[i]=obj;
 					return;
 				}
+				if(quadraticProber==0)
+				{
+					hold = i;
+					i+=quadraticProber++;
+					
+				}
+				else
+				{
+					hold = i;
+					quadraticProber = quadraticProber*2;
+					i+=quadraticProber;
+				}
 			}
-			int size = table.length;
 			reHash();
-			table[size] = obj;
+			table[hold+quadraticProber] = obj;
 			
 		}
 	}
