@@ -1,21 +1,36 @@
+//Daria Fradkin
+//September 28, 2015
+//Simple HasTable object
+//This version of HashTable will do a simple put using an object's hashcode. 
+//It does not use separate key and value objects. 
+
 public class HashTable<E>
 {
 	E[] ht;
 	int coll;
 	int c; //tracks the number of the collisions per variable
+	double loadfactor;
+	int n; //number of values in table
 	
+	//Default constructor. Initializes to capacity 100.
 	public HashTable()
 	{
 		ht=(E[]) new Object[100];
 		coll=0;
+		loadfactor=0.5;
+		n=0;
 	}
 	
+	//Default constructor. Initializes to capacity.
 	public HashTable(int capacity)
 	{
 		ht=(E[]) new Object[capacity];
 		coll=0;
+		loadfactor=0.5;
+		n=0;
 	}
 	
+	//Puts the object in the hashtable. Deals with collisions by quadratic probing.
 	public void put(E obj)
 	{
 		c=0;
@@ -27,6 +42,9 @@ public class HashTable<E>
 		if (ht[spot]==null)
 		{
 			ht[spot]=obj;
+			n++;
+			if (n/ht.length>loadfactor)
+				rehash();
 			//System.out.println(obj.hashCode()%ht.length);
 		}
 		else
@@ -40,11 +58,17 @@ public class HashTable<E>
 		if (coll==ht.length/4)
 			rehash();
 		if (ht[n]==null)
+		{
 			ht[n]=obj;
+			n++;
+			if (n/ht.length>loadfactor)
+				rehash();
+		}
 		else
 			put(obj, (n+c*2)%ht.length);
 	}
 	
+	//String representation of the HashTable.
 	public String toString()
 	{
 		String r="";
@@ -57,6 +81,9 @@ public class HashTable<E>
 		return r;
 	}
 	
+	//Doubles the size of the HashTable and rehashes each item contained within. 
+	//Should be called anytime calling the put function makes the current fill of the 
+	//HashTable exceed the load factor.
 	private void rehash()
 	{
 		//ht1=new E[ht.length];
@@ -67,6 +94,7 @@ public class HashTable<E>
 		//	else
 		//		ht2[i]=ht[i];
 		coll=0;
+		n=0;
 		E[] ht1=(E[]) new Object[ht.length];
 		ht1=ht;
 		ht=(E[]) new Object[ht.length*2];
