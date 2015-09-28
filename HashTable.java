@@ -1,3 +1,6 @@
+//Maddie Temares
+//September 28
+
 public class HashTable
 {
 	private Object[] arr;
@@ -5,6 +8,7 @@ public class HashTable
 	private double percentFilled = 0.0;
 	private int numFilled = 0;
 	
+	//Default constructor. Initializes to capacity 100.
 	public HashTable()
 	{
 		arr = new Object[100];
@@ -15,6 +19,8 @@ public class HashTable
 		arr = new Object[capacity];
 	}
 	
+	//Puts the object in the hashtable. Deals with collisions by placing the object in the
+	// next open spot.
 	public void put(Object obj)
 	{
 		int location = obj.hashCode()%arr.length;
@@ -39,6 +45,7 @@ public class HashTable
 		}
 	}
 	
+	//String representation of the HashTable.
 	public String toString()
 	{
 		String s = "";
@@ -47,6 +54,9 @@ public class HashTable
 		return s;
 	}
 	
+	//Doubles the size of the HashTable and rehashes each item contained within. Should be
+	// called anytime calling the put function makes the current fill of the HashTable 
+	//exceed the load factor.
 	private void rehash()
 	{
 		Object[] old = new Object[arr.length];
