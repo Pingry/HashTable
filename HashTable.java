@@ -22,7 +22,7 @@ public class HashTable
 		int num = obj.hashCode();
 		num = num%table.length;
 		
-		if(table[num]!=null)
+		if(table[num]==null)
 		{
 			table[num] = obj;
 		}
@@ -30,7 +30,7 @@ public class HashTable
 		{
 			for(int i = num; i<table.length;i++)
 			{
-				if(table[i]!=null)
+				if(table[i]==null)
 				{
 					table[i]=obj;
 					return;
@@ -48,7 +48,7 @@ public class HashTable
 		String str = "| ";
 		for(int i = 0; i<table.length; i++)
 		{
-			str = str + table[i] + "| ";
+			str = str + table[i] + " | ";
 		}
 		return str;
 	}
