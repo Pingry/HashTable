@@ -5,7 +5,9 @@ public class HashTable
 	public static final double loadFactor = .6;
 	private Object[] table;
 	private int occupied;
-	
+	//occupied is the number of spaces in the table that have been taken
+
+//Default constructor. Initializes to capacity 100.	
 	public HashTable()
 	{
 		table = new Object[100];
@@ -17,7 +19,10 @@ public class HashTable
 		table = new Object[c];
 		occupied=0;
 	}
-	
+
+//Puts the object in the hashtable. 
+//Deals with collisions by placing the object using quadratic probing
+
 	public void put(Object o)
 	{
 		int spot = (int)  o.hashCode();
@@ -63,6 +68,9 @@ public class HashTable
 		
 		
 	}
+	
+//Makes the size of the HashTable the next prime number after double the size of the previous one
+// and rehashes each item contained within. 
 	 private void rehash()
 	 {
 	 	System.out.println("Rehashing");
@@ -81,7 +89,9 @@ public class HashTable
 	 			this.put(holder[j]);
 	 	}
 	 }
-	 
+	
+//checks for the next prime, called in rehash 
+//not so efficient
 	 private boolean primeChecker(int a)
 	 {
 	 	for (int x=2; x<((int) Math.sqrt(a))+1; x++)
@@ -91,7 +101,8 @@ public class HashTable
 	 	}
 	 	return true;
 	 }
-	 
+
+//String representation of the HashTable.	 
 	 public String toString()
 	 {
 	 	String s= "";
