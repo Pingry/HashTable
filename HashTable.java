@@ -2,19 +2,23 @@ public class HashTable<E>
 {
 	E[] ht;
 	int coll;
+	int c; //tracks the number of the collisions per variable
 	
 	public HashTable()
 	{
 		ht=(E[]) new Object[100];
+		coll=0;
 	}
 	
 	public HashTable(int capacity)
 	{
 		ht=(E[]) new Object[capacity];
+		coll=0;
 	}
 	
 	public void put(E obj)
 	{
+		c=0;
 		//System.out.println(obj.hashCode());
 		//System.out.println(obj.hashCode()%ht.length);
 		int spot=obj.hashCode()%ht.length;
@@ -31,13 +35,14 @@ public class HashTable<E>
 	
 	private void put(E obj, int n)
 	{
+		c++;
 		coll++;
 		if (coll==ht.length/4)
 			rehash();
 		if (ht[n]==null)
 			ht[n]=obj;
 		else
-			put(obj, n+1);
+			put(obj, (n+c*2)%ht.length);
 	}
 	
 	public String toString()
@@ -46,6 +51,8 @@ public class HashTable<E>
 		for (int i=0; i < ht.length; i++)
 			if (ht[i]!=null)
 				r+=(ht[i].toString() + " ");
+			else
+				r+="null ";
 		r+="\n";
 		return r;
 	}
