@@ -9,6 +9,8 @@ public class Runner
 		list.put("corn");
 		list.put("apple");
 		list.put("cherry");
+		list.put(new String());
+		list.put(new String());
 		System.out.println(list);
 	}
 }
