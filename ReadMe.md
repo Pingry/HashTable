@@ -3,9 +3,12 @@
 // Hash Table Version 0
 
 public class HashTable
+
 {
 	private Object[] table;
+	
 	private final double loadFactor = 0.6;
+	
 	private int numObjects;
 	
 	/** Default Constructor
