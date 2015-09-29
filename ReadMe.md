@@ -1,6 +1,7 @@
 // Akshina Gupta
 // 9/29/2015
 // Hash Table Version 0
+
 public class HashTable
 {
 	private Object[] table;
