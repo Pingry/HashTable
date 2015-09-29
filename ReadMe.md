@@ -5,6 +5,7 @@
 public class HashTable
 
 {
+	
 	private Object[] table;
 	
 	private final double loadFactor = 0.6;
