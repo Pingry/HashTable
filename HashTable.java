@@ -1,15 +1,32 @@
+/**
+ * @author Billy Fallon
+ * @version 9/30/15
+ */
+
 public class HashTable
 {
+	/**
+	 * class field array table
+	 * Stores objects that have been hashed
+	 */
 	private Object[] table;
 	
-	//Initializes private variable table with size = 100
+	/**
+	 * Default constructor. Initializes to capacity 100.
+	 * @param null
+	 * @return null
+	 */
 	public HashTable()
 	{
 		table = new Object[100];
 		
 	}
 	
-	//Initializes private variable table with size = parameter capacity
+	/**
+	 * Constructor. Initializes to capacity param int capacity
+	 * @param int that is desired capacity of HashTable
+	 * @return 
+	 */
 	public HashTable(int capacity)
 	{
 		table = new Object[capacity];
@@ -60,7 +77,11 @@ public class HashTable
 			
 		}
 	}
-	//Converts the ArrayList table into a string using a for loop.
+	/**
+	 * String representation of the HashTable.
+	 * @param null
+	 * @return String str which is a string representation of table array
+	 */
 	public String toString()
 	{
 		String str = "| ";
@@ -71,8 +92,13 @@ public class HashTable
 		return str;
 	}
 	
-	//reHashes the ArrayList table by creating a new ArrayList copy with size = double table's size, copies all of table's contents into copy ArrayList using a for loop,
-	//then sets table ArrayList = copy ArrayList.
+	/**
+	 * Doubles the size of the HashTable and rehashes each item contained within. 
+	 * Should be called anytime calling the put function makes the current fill 
+	 * of the HashTable exceed the load factor.
+	 * @param null
+	 * @return void 
+	 */
 	private void reHash()
 	{
 		Object[] copy = new Object[(table.length*2)];
