@@ -31,10 +31,11 @@ public class HashTable
 	{
 		table = new Object[capacity];
 	}
-	
-	//Puts parameter obj into table by putting it in the position of its hash code mod table's size. If there is already an object at that position,
-	//it puts it at the next space. If that space is filled, then it uses quadraticProbing to place the object. If all spaces which quadratic probing  
-	//checked are filled, it rehashes using the rehash method, and places it in the position where quadraticProbing would put it. 
+	/**
+	 * Puts the object in the hashtable. Deals with collisions by implementing quadratic probing
+	 * @param Object obj	
+	 * @return void
+	 */
 	public void put (Object obj)
 	{
 		int num = obj.hashCode();
