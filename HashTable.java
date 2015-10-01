@@ -1,12 +1,12 @@
 //Daria Fradkin
-//September 28, 2015
+//October 1, 2015
 //Simple HasTable object
 //This version of HashTable will do a simple put using an object's hashcode. 
 //It does not use separate key and value objects. 
 
-public class HashTable<E>
+public class HashTable<K,V>
 {
-	E[] ht;
+	Entry[] ht;
 	int coll;
 	int c; //tracks the number of the collisions per variable
 	double loadfactor;
@@ -15,7 +15,7 @@ public class HashTable<E>
 	//Default constructor. Initializes to capacity 100.
 	public HashTable()
 	{
-		ht=(E[]) new Object[100];
+		ht=(Entry[]) new Object[100];
 		coll=0;
 		loadfactor=0.5;
 		n=0;
@@ -24,34 +24,35 @@ public class HashTable<E>
 	//Default constructor. Initializes to capacity.
 	public HashTable(int capacity)
 	{
-		ht=(E[]) new Object[capacity];
+		ht=(Entry[]) new Object[capacity];
 		coll=0;
 		loadfactor=0.5;
 		n=0;
 	}
 	
 	//Puts the object in the hashtable. Deals with collisions by quadratic probing.
-	public void put(E obj)
+	public void put(K key, V value)
 	{
+		Entry e = new Entry<K,V>(key, value);
 		c=0;
 		//System.out.println(obj.hashCode());
 		//System.out.println(obj.hashCode()%ht.length);
-		int spot=obj.hashCode()%ht.length;
+		int spot=key.hashCode()%ht.length;
 		if (spot<0)
 			spot+=ht.length;
 		if (ht[spot]==null)
 		{
-			ht[spot]=obj;
+			ht[spot]=e;
 			n++;
 			if (n/ht.length>loadfactor)
 				rehash();
 			//System.out.println(obj.hashCode()%ht.length);
 		}
 		else
-			put(obj, (spot+1)%ht.length);
+			put(e, (spot+1)%ht.length);
 	}
 	
-	private void put(E obj, int n)
+	private void put(Entry e, int n)
 	{
 		c++;
 		coll++;
@@ -59,13 +60,13 @@ public class HashTable<E>
 			rehash();
 		if (ht[n]==null)
 		{
-			ht[n]=obj;
+			ht[n]=e;
 			n++;
 			if (n/ht.length>loadfactor)
 				rehash();
 		}
 		else
-			put(obj, (n+c*2)%ht.length);
+			put(e, n+1);
 	}
 	
 	//String representation of the HashTable.
@@ -74,7 +75,7 @@ public class HashTable<E>
 		String r="";
 		for (int i=0; i < ht.length; i++)
 			if (ht[i]!=null)
-				r+=(ht[i].toString() + " ");
+				r+=(ht[i].key.toString() + " " + ht[i].value.toString());
 			else
 				r+="null ";
 		r+="\n";
@@ -95,25 +96,39 @@ public class HashTable<E>
 		//		ht2[i]=ht[i];
 		coll=0;
 		n=0;
-		E[] ht1=(E[]) new Object[ht.length];
+		Entry[] ht1=(Entry[]) new Object[ht.length];
 		ht1=ht;
-		ht=(E[]) new Object[ht.length*2];
+		ht=(Entry[]) new Object[ht.length*2];
 		for (int i=0; i<ht1.length; i++)
 			if (ht1[i]!=null)
-				put(ht1[i]);
+				put( (K) ht1[i].key, (V) ht1[i].value); //typecast it to value, because Object 
 	}
 	
-	/*
+	
+	
+	private class Entry<K,V>
+	{
+		public K key;
+		public V value;
+		
+		public Entry(K k, V v)
+		{
+			key=k;
+			value=v;
+		}
+	}
+	
+	///*
 	public static void main(String[] args)
 	{
-		HashTable<String> names = new HashTable<String>();
+		HashTable<String,String> fruit = new HashTable<String,String>();
 		
-		names.put("A");
-		names.put("Daria");
-		names.put("Dariasd");
-		names.put("B");
-		names.put("C");
-		System.out.println(names);
+		fruit.put("apple","red");
+		fruit.put("banana","yellow");
+		fruit.put("pear","green");
+		fruit.put("grape","purple");
+		fruit.put("orange","orange");
+		System.out.println(fruit);
 	}
-	*/
+	//*/
 }
