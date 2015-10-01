@@ -4,6 +4,7 @@
 	@author Zachary Keller
 	@version 9/29/15
 */
+import java.util.Random;
 
 public class Runner
 {
@@ -18,14 +19,15 @@ public class Runner
 */
 	public static void main( String [] args )
 	{
-		HashTable h= new HashTable(7);
-		for (int i=0; i<5; i++)
-		{
-			h.put(new Object());
-			h.put("testString");
-		}
+		HashTable<Integer, String> h= new HashTable<Integer, String>(7);
+		h.put(1, "1stItem");
+		h.put(1, "2ndItem");
+		h.put(3, "3rdItem");
+		h.put(4, "4thItem");
+		h.put(5, "5thItem");;
+		System.out.println(h.remove(5));
 
-		//System.out.println(h);  -used to see the final table
+		System.out.println(h);  //-used to see the final table
 	}
 
 			

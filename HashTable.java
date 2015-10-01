@@ -8,19 +8,19 @@
 
 import java.lang.Math;
 
-public class HashTable
+public class HashTable<K,V>
 {
 /** Any percentage of occupancy above this is too much and will rehash */
 	public static final double loadFactor = .6;
 /** the actual table that the objects are being appended to*/
-	private Object[] table;
+	private Entry[] table;
 /** the number of objects in the table, is used to determine whether the loadFactor is being exceeded*/
 	private int occupied;
 
 /** Default constructor. Initializes the table to capacity 100.	*/
 	public HashTable()
 	{
-		table = new Object[100];
+		table = new Entry[100];
 		occupied=0;
 	}
 	
@@ -29,7 +29,7 @@ public class HashTable
 */
 	public HashTable(int c)
 	{
-		table = new Object[c];
+		table = new Entry[c];
 		occupied=0;
 	}
 
@@ -38,9 +38,10 @@ public class HashTable
 	Deals with collisions by placing the object using quadratic probing
 	@param o  an object to be placed in the table
 */
-	public void put(Object o)
+	public void put(K k, V v)
 	{
-		int spot = (int)  o.hashCode();
+		Entry<K,V> e = new Entry<K,V>(k,v);
+		int spot = e.getKey().hashCode();
 		// System.out.println("Intial code is: " + spot);
 		spot = spot% table.length;
 		spot = Math.abs(spot);
@@ -53,7 +54,7 @@ public class HashTable
 		while(placed == false)
 		{
 			int place= (spot + change) % table.length;
-			if (table[place] instanceof Object )
+			if (table[place] !=null )
 			{
 				if (change == 0)
 					change += 1;
@@ -62,7 +63,7 @@ public class HashTable
 			}
 			else
 			{
-				table[place] = o;
+				table[place] = e;
 				placed = true;
 				occupied += 1;
 			}
@@ -90,7 +91,7 @@ public class HashTable
 */ 
 	 private void rehash()
 	 {
-	 	Object [] holder = new Object[table.length];
+	 	Entry [] holder = new Entry[table.length];
 	 	for (int i=0; i<table.length; i++)
 	 	{
 	 		holder[i] =table[i];
@@ -98,11 +99,11 @@ public class HashTable
 	 	int biggerPrime = (table.length * 2) + 1;
 	 	while (primeChecker(biggerPrime) == false)
 	 		biggerPrime += 2;
-	 	table = new Object[biggerPrime];
+	 	table = new Entry[biggerPrime];
 	 	for ( int j=0; j<holder.length; j++)
 	 	{
-	 		if (holder[j] instanceof Object)
-	 			this.put(holder[j]);
+	 		if (holder[j] != null)
+	 			this.put((K) holder[j].getKey(), (V) holder[j]);
 	 	}
 	 }
 	
@@ -121,6 +122,36 @@ public class HashTable
 	 	}
 	 	return true;
 	 }
+	 
+	 public V remove(K key)
+	 {
+	 	int spot = key.hashCode();
+	 	spot = spot% table.length;
+		spot = Math.abs(spot);
+		int finder=0;
+		int place= spot + finder%table.length;
+		while ( table[place]!= null &&  (K) (table[place].getKey()) != key)
+		{
+			
+			if (finder == 0)
+				finder = 1;
+			else
+				finder = finder * 2;
+				
+			place= spot + finder % table.length;
+				
+				
+		}
+		
+		Entry<K,V> temp = table[place];
+		V output = temp.getValue();
+		System.out.println(output.getClass().getName());
+		table[place]= null;
+		return output;
+		
+	 
+	 
+	 }
 
 /** Returns a string representation of the hash table, 
 	complete with aesthetically pleasing dividers.
@@ -132,13 +163,41 @@ public class HashTable
 	 	for (int i=0; i<table.length; i++)
 	 	{
 	 		// so that we can see the actual object, as opposed to its address
-	 		if (table[i] instanceof Object)
-	 			s= s+ table[i].toString();
+	 		if (table[i] != null)
+	 		{
+	 			V content= (V) table[i].getValue();
+	 			s= s+ (content.toString());
+	 		}
 	 		else
 	 			s= s+ table[i];
 	 		s=s+ "|";
 	 	}
 	 	return s;
+	 }
+	 
+	 private class Entry<K,V>
+	 {
+	 	private K key;
+	 	private V value;
+	 	
+	 	public Entry(K k, V v)
+	 	{
+	 		key = k;
+	 		value = v;
+	 	}
+	 	
+	 	public K getKey()
+	 	{
+	 		return key;
+	 	}
+	 	
+	 	public V getValue()
+	 	{
+	 		return value;
+	 	}
+	 
+	 
+	 
 	 }
 	
 
