@@ -1,11 +1,15 @@
 /**
 @author Maddie Temares
 @version September 28, 2015
+
+public void put (K key, V value)
+-- value is what you want to put and key is where you want to put it
+public class HashTable<K, V>
 */
 
-public class HashTable
+public class HashTable<K, V>
 {
-	private Object[] arr;
+	private Entry<K,V>[] arr;
 	private double loadfactor = 0.6;
 	private double percentFilled = 0.0;
 	private int numFilled = 0;
@@ -15,7 +19,7 @@ public class HashTable
 	*/
 	public HashTable()
 	{
-		arr = new Object[100];
+		arr = new Entry[100];
 	}
 	
 	/**
@@ -23,7 +27,7 @@ public class HashTable
 	*/
 	public HashTable(int capacity)
 	{
-		arr = new Object[capacity];
+		arr = new Entry[capacity];
 	}
 	
 	/**
@@ -32,9 +36,9 @@ public class HashTable
 	@param obj
 	@return void
 	*/
-	public void put(Object obj)
+	public void put(K key, V value)
 	{
-		int location = obj.hashCode()%arr.length;
+		int location = key.hashCode()%arr.length;
 		if (location < 0)
 		{
 			location = location +arr.length;
@@ -47,7 +51,7 @@ public class HashTable
 		{
 			location = location +100;
 		}
-		arr[location] = obj;
+		arr[location] = new Entry(key, value);
 		numFilled++;
 		percentFilled = (numFilled)/(arr.length);
 		if (percentFilled >= loadfactor)
@@ -76,30 +80,72 @@ public class HashTable
 	*/
 	private void rehash()
 	{
-		Object[] old = new Object[arr.length];
+		Entry<K,V>[] old = new Entry[arr.length];
 		for (int x =0; x<arr.length; x++)
 		{
 			old[x] = arr[x];
 		}
 		int newSize = arr.length * 2;
-		arr = new Object[newSize];
-		for (Object o: old)
+		arr = new Entry[newSize];
+		for (Entry<K,V> e: old)
 		{
-			if (o!= null)
+			if (e!= null)
 			{
-				put(o);
+				put(e.key, e.value);
 			}
 		}
 	}
 	
+
+	public V remove (K key)
+	{
+		int posslocation = key.hashCode()%arr.length;
+		if (posslocation < 0)
+		{
+			posslocation = posslocation +arr.length;
+		}
+		while (arr[posslocation] != null)
+		{
+			posslocation++;
+		}
+		if (posslocation < 0)
+		{
+			posslocation = posslocation +100;
+		}
+		while (arr[posslocation].key == key)
+		{
+			posslocation++;
+		}
+		V toReturn = arr[posslocation].value;
+		arr[posslocation] = null;
+		return toReturn;
+	}
+
 	public static void main(String[] args)
 	{
 		HashTable names = new HashTable();
-		names.put("A");
-		names.put("Daria");
-		names.put("Dariasd");
-		names.put("B");
-		names.put("C");
+		names.put("A", "first letter in the alphabet");
+		names.put("Daria", "name of Daria");
+		names.put("Dariasd", "name plus random characters");
+		names.put("B", "second letter of alphabet");
+		names.put("C", "third letter of alphabet");
+		System.out.println(names);
+		names.remove("A");
 		System.out.println(names);
 	}
+	
+
+	private class Entry<K,V>
+	{
+		public K key;
+		public V value;
+
+		public Entry(K k, V v)
+		{
+			k = key;
+			v = value;
+		}
+	}
+	
+	
 }
