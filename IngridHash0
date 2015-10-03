@@ -1,0 +1,93 @@
+// Ingrid Shu
+// HashTable0
+
+public class HashTable {
+	
+	private Object[] table;
+	private int size;
+	private int capacity = 0;
+	
+	// default constructor sets size of table to 100
+	public HashTable()
+	{
+		table = new Object[100];
+		size = 100;
+	}
+
+	// constructor that sets size to value of param
+	public HashTable(int capacity){
+		table = new Object[capacity];
+		size = capacity;
+	}
+	
+	public void put(Object obj)
+	{
+		capacity++;
+		
+		if(capacity / size >= .6)
+		{
+			rehash();
+		}
+		
+		int key = obj.hashCode();
+		int quadratic = 1;
+		
+		while(true)
+		{
+			if(table[key % size] == null)
+			{
+				table[key % size] = obj;
+				return;
+			}
+			else
+			{
+				if(table[key%size + quadratic] == null)
+				{
+					table[key%size + quadratic] = obj;
+					return;
+				}
+				quadratic = quadratic * 2;
+			}
+		}
+	}
+	
+	
+	// returns string representation of hashtable
+	public String toString()
+	{
+		String s = "";
+		for(int i = 0; i < table.length; i++)
+		{
+			if(table[i] != null)
+			{
+				s = s + table[i].toString() + ", ";
+			}
+			else
+			{
+				s = s + "null, ";
+			}
+		}
+		
+		return s;
+	}
+	
+	// doubles the size of the array and rehashes the values based on the updated size
+	private void rehash()
+	{
+		Object[] origTable = new Object[size];
+		
+		for(int i = 0; i < size; i++)
+		{
+			origTable[i] = table[i];
+		}
+		
+		size = size * 2;
+		table = new Object[size];
+		
+		for(int i = 0; i < size; i++)
+		{
+			Object o = origTable[i];
+			put(o);
+		}
+	}
+}
