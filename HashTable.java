@@ -1,10 +1,8 @@
 /**
 @author Maddie Temares
-@version September 28, 2015
+@version October 4, 2015
 
-public void put (K key, V value)
--- value is what you want to put and key is where you want to put it
-public class HashTable<K, V>
+This HashTable will store entries, given their keys and values.
 */
 
 public class HashTable<K, V>
@@ -24,6 +22,7 @@ public class HashTable<K, V>
 	
 	/**
 	@param capacity Size of the hash table.
+	Initializes the array of Entries to the given capacity.
 	*/
 	public HashTable(int capacity)
 	{
@@ -96,7 +95,11 @@ public class HashTable<K, V>
 		}
 	}
 	
-
+	/**
+	Removes the entry with a given key.
+	@param key
+	@return V
+	*/
 	public V remove (K key)
 	{
 		int posslocation = key.hashCode()%arr.length;
@@ -112,7 +115,7 @@ public class HashTable<K, V>
 		{
 			posslocation = posslocation +100;
 		}
-		while (arr[posslocation].key == key)
+		while (arr[posslocation].key != key)
 		{
 			posslocation++;
 		}
@@ -120,6 +123,75 @@ public class HashTable<K, V>
 		arr[posslocation] = null;
 		return toReturn;
 	}
+	
+	/**
+	Gets the value corresponding to a given key.
+	@param key
+	@return V
+	*/
+	public V get(K key)
+	{
+		int posslocation = key.hashCode()%arr.length;
+		if (posslocation < 0)
+		{
+			posslocation = posslocation +arr.length;
+		}
+		while (arr[posslocation] != null)
+		{
+			posslocation++;
+		}
+		if (posslocation < 0)
+		{
+			posslocation = posslocation +100;
+		}
+		while (arr[posslocation].key != key && posslocation< arr.length)
+		{
+			posslocation++;
+		}
+		if (posslocation == arr.length)
+		{
+			return null;
+		}
+		V toReturn = arr[posslocation].value;
+		return toReturn;
+	}
+	
+	
+	/**
+	Sees whether or not the array of entries contains an entry with a given key.
+	@param key
+	@return boolean
+	*/
+	public boolean containsKey (K key)
+	{
+		for (Entry e: arr)
+		{
+			if (e.key == key)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	/**
+	Sees whether or not the array of entries contains an entry with a given value.
+	@param value
+	@return boolean
+	*/
+	public boolean containsValue (V value)
+	{
+		for (Entry e: arr)
+		{
+			if (e.value == value)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
 
 	public static void main(String[] args)
 	{
@@ -134,7 +206,9 @@ public class HashTable<K, V>
 		System.out.println(names);
 	}
 	
-
+	/**
+	Nested class used to hold key-value pairings.
+	*/
 	private class Entry<K,V>
 	{
 		public K key;
