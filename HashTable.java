@@ -9,8 +9,7 @@ public class HashTable<K, V>
 {
 	private Entry<K,V>[] arr;
 	private double loadfactor = 0.6;
-	private double percentFilled = 0.0;
-	private int numFilled = 0;
+	private int numFilled;
 	
 	/** 
 	Default constructor. Initializes to capacity 100.
@@ -48,11 +47,11 @@ public class HashTable<K, V>
 		}
 		if (location < 0)
 		{
-			location = location +100;
+			location = location + arr.length;
 		}
 		arr[location] = new Entry(key, value);
 		numFilled++;
-		percentFilled = (numFilled)/(arr.length);
+		double percentFilled = (numFilled)/(arr.length);
 		if (percentFilled >= loadfactor)
 		{
 			rehash();
