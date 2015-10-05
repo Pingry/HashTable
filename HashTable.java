@@ -132,6 +132,7 @@ public class HashTable <K, V>
 			{
 				V v = table[i].value;
 				table[i]=null;
+				numFilled--;
 				return v;
 			}
 		}
