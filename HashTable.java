@@ -1,5 +1,5 @@
 //Daria Fradkin
-//October 1, 2015
+//October 5, 2015
 //Simple HasTable object
 //This version of HashTable will do a simple put using an object's hashcode. 
 //It does not use separate key and value objects. 
@@ -15,7 +15,7 @@ public class HashTable<K,V>
 	//Default constructor. Initializes to capacity 100.
 	public HashTable()
 	{
-		ht=(Entry[]) new Object[100];
+		ht=(Entry<K,V>[]) new Entry[100];
 		coll=0;
 		loadfactor=0.5;
 		n=0;
@@ -75,7 +75,7 @@ public class HashTable<K,V>
 		String r="";
 		for (int i=0; i < ht.length; i++)
 			if (ht[i]!=null)
-				r+=(ht[i].key.toString() + " " + ht[i].value.toString());
+				r+=(ht[i].key.toString() + "-" + ht[i].value.toString()) + " ";
 			else
 				r+="null ";
 		r+="\n";
@@ -104,7 +104,60 @@ public class HashTable<K,V>
 				put( (K) ht1[i].key, (V) ht1[i].value); //typecast it to value, because Object 
 	}
 	
+	//Removes the Entry with the corresponding key and returns its value. 
+	//Returns null if the key does not exist in the table.
+	public V remove(K key)
+	{
+		V save;
+		if (containsKey(key)==false)
+			return null;
+		for (int i=0;i<ht.length;i++)
+		{
+			if (ht[i].key.equals(key))
+			{
+				save= (V) ht[i].value;
+				ht[i]=null;
+				return save;
+			}
+		}
+		return null; //should never reach this line
+	}
+
+
+	//Returns the value that corresponds to key. Returns null if the key does not exist in the table.
+	public V get(K key)
+	{
+		if (containsKey(key)==false)
+			return null;
+		for (int i=0;i<ht.length;i++)
+		{
+			if (ht[i].key.equals(key))
+				return (V) ht[i].value;
+		}
+		return null; //should never reach this line
+	}
+
+	//Returns whether or not key exists in the table.
+	public boolean containsKey(K key)
+	{
+		for (int i=0;i<ht.length;i++)
+		{
+			if (ht[i].key.equals(key))
+				return true;
+		}
+		return false;
+	}
 	
+	//Returns whether or not value exists in the table.
+	public boolean containsValue(V value)
+	{
+		for (int i=0;i<ht.length;i++)
+		{
+			if (ht[i].value.equals(value))
+				return true;
+		}
+		return false;
+	}
 	
 	private class Entry<K,V>
 	{
@@ -118,7 +171,7 @@ public class HashTable<K,V>
 		}
 	}
 	
-	///*
+	/*
 	public static void main(String[] args)
 	{
 		HashTable<String,String> fruit = new HashTable<String,String>();
@@ -130,5 +183,5 @@ public class HashTable<K,V>
 		fruit.put("orange","orange");
 		System.out.println(fruit);
 	}
-	//*/
+	*/
 }
