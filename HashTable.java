@@ -70,6 +70,7 @@ public class HashTable <K, V>
 				{
 					table[i]=E;
 					numFilled+=1;
+					break;
 				}
 			}
 				
