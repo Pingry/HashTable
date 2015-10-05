@@ -25,7 +25,9 @@ public class Runner
 		h.put(3, "3rdItem");
 		h.put(4, "4thItem");
 		h.put(5, "5thItem");;
-		System.out.println(h.remove(5));
+		System.out.println(h.remove(6));
+		System.out.println("get: " + h.get(3));
+		System.out.println("containsValue: " + h.containsValue("1stItem"));
 
 		System.out.println(h);  //-used to see the final table
 	}

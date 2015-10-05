@@ -56,6 +56,8 @@ public class HashTable<K,V>
 			int place= (spot + change) % table.length;
 			if (table[place] !=null )
 			{
+				if ( (K) table[place].getKey() == k)
+					return;
 				if (change == 0)
 					change += 1;
 				else
@@ -78,7 +80,6 @@ public class HashTable<K,V>
 		double filled = ((double) occupied) / table.length;
 		if (filled > loadFactor)
 		{
-			occupied = 0;
 			rehash();
 		}
 		
@@ -91,6 +92,7 @@ public class HashTable<K,V>
 */ 
 	 private void rehash()
 	 {
+	 	occupied = 0;
 	 	Entry [] holder = new Entry[table.length];
 	 	for (int i=0; i<table.length; i++)
 	 	{
@@ -103,7 +105,7 @@ public class HashTable<K,V>
 	 	for ( int j=0; j<holder.length; j++)
 	 	{
 	 		if (holder[j] != null)
-	 			this.put((K) holder[j].getKey(), (V) holder[j]);
+	 			this.put((K) holder[j].getKey(), (V) holder[j].getValue());
 	 	}
 	 }
 	
@@ -142,16 +144,67 @@ public class HashTable<K,V>
 				
 				
 		}
+		if (table[place]==null)
+		{
+			return null;
+		}
+		
 		
 		Entry<K,V> temp = table[place];
 		V output = temp.getValue();
 		System.out.println(output.getClass().getName());
 		table[place]= null;
+		occupied -= 1;
 		return output;
 		
-	 
-	 
 	 }
+
+	public V get(K key)
+	{
+		int spot = key.hashCode();
+	 	spot = spot% table.length;
+		spot = Math.abs(spot);
+		int finder=0;
+		int place= spot + finder%table.length;
+		while ( table[place]!= null &&  (K) (table[place].getKey()) != key)
+		{
+			
+			if (finder == 0)
+				finder = 1;
+			else
+				finder = finder * 2;
+				
+			place= spot + finder % table.length;
+				
+				
+		}
+		if (table[place]==null)
+		{
+			return null;
+		}
+		
+		
+		Entry<K,V> temp = table[place];
+		V output = temp.getValue();
+		return output;
+		
+	}
+	
+	public boolean containsValue(V value)
+	{
+		for (int i=0; i<table.length; i++)
+		{
+			if (table[i] != null)
+			{
+				if ( (V) table[i].getValue() == value)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 
 /** Returns a string representation of the hash table, 
 	complete with aesthetically pleasing dividers.
