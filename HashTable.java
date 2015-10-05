@@ -1,15 +1,17 @@
 /**
 @author Maddie Temares
-@version October 4, 2015
+@version October 5, 2015
 
 This HashTable will store entries, given their keys and values.
 */
+
+import java.lang.Math;
 
 public class HashTable<K, V>
 {
 	private Entry<K,V>[] arr;
 	private double loadfactor = 0.6;
-	private int numFilled;
+	private double numFilled;
 	
 	/** 
 	Default constructor. Initializes to capacity 100.
@@ -17,6 +19,7 @@ public class HashTable<K, V>
 	public HashTable()
 	{
 		arr = new Entry[100];
+		numFilled = 0.0;
 	}
 	
 	/**
@@ -26,6 +29,7 @@ public class HashTable<K, V>
 	public HashTable(int capacity)
 	{
 		arr = new Entry[capacity];
+		numFilled =0.0;
 	}
 	
 	/**
@@ -36,19 +40,16 @@ public class HashTable<K, V>
 	*/
 	public void put(K key, V value)
 	{
-		int location = key.hashCode()%arr.length;
-		if (location < 0)
-		{
-			location = location +arr.length;
-		}
+		int location = Math.abs(key.hashCode())%arr.length;
 		while (arr[location] != null)
 		{
+			if (location== arr.length)
+			{
+				location=0;
+			}
 			location++;
 		}
-		if (location < 0)
-		{
-			location = location + arr.length;
-		}
+		
 		arr[location] = new Entry(key, value);
 		numFilled++;
 		double percentFilled = (numFilled)/(arr.length);
@@ -65,8 +66,18 @@ public class HashTable<K, V>
 	public String toString()
 	{
 		String s = "";
-		for (Object o: arr)
-			s += o + " ";
+		for (int i = 0; i<arr.length; i++)
+        {
+            if (arr[i] != null)
+            {
+                s += ((K)arr[i].key) + "," + ((V)arr[i].value);
+            }
+            if (arr[i] == null)
+            {
+            	s+= "null";
+            }
+            s+= " ";
+        }
 		return s;
 	}
 	
@@ -114,10 +125,12 @@ public class HashTable<K, V>
 		{
 			posslocation = posslocation +100;
 		}
-		while (arr[posslocation].key != key)
+		
+		while (arr[posslocation] != null && arr[posslocation].key != key)
 		{
 			posslocation++;
 		}
+		
 		V toReturn = arr[posslocation].value;
 		arr[posslocation] = null;
 		return toReturn;
@@ -194,15 +207,15 @@ public class HashTable<K, V>
 
 	public static void main(String[] args)
 	{
-		HashTable names = new HashTable();
-		names.put("A", "first letter in the alphabet");
-		names.put("Daria", "name of Daria");
-		names.put("Dariasd", "name plus random characters");
-		names.put("B", "second letter of alphabet");
-		names.put("C", "third letter of alphabet");
+		HashTable<Integer, String> names = new HashTable<Integer, String>(10);
+		names.put(1, "A");
+		names.put(2, "B");
+		names.put(3, "C");
+		names.put(4, "D");
+		names.put(5, "E");
 		System.out.println(names);
-		names.remove("A");
-		System.out.println(names);
+		//names.remove(3);
+		//System.out.println(names);
 	}
 	
 	/**
@@ -215,8 +228,8 @@ public class HashTable<K, V>
 
 		public Entry(K k, V v)
 		{
-			k = key;
-			v = value;
+			key = k;
+			value = v;
 		}
 	}
 	
