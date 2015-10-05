@@ -1,43 +1,123 @@
-#Hash Table Project
+/**
 
-For this project, you will be creating a simple HashTable object.
+*/
+// Yanni Angelides
+// Creating a basic hash table object
 
-##Commit Schedule
-Version 0: 10/01/15 8am </br>
-Version 1 draft: 10/05/15 8am </br>
-Version 1 final: 10/07/15 8am 
+import java.lang.Math;
 
-##HashTable\<K,V> API - Version 1
-This version of HashTable builds on Version 0 and adds generics as well as a few additional methods.
-
-###HashTable()
-Default constructor. Initializes to capacity 100 (or an appropriate prime number if you're using quadratic probing).
-
-###HashTable(int capacity)
-
-###public void put(K key, V value)
-Puts a key-value entry in the hashtable. Deals with collisions by placing the object in the next open spot (OR by using quadratic probing). 
-
-###public String toString()
-String representation of the HashTable.
-
-###private void rehash()
-Doubles the size of the HashTable and rehashes each item contained within. Should be called anytime calling the put function makes the current fill of the HashTable exceed the load factor.
-
-###public V remove(K key)
-Removes the Entry with the corresponding key and returns its value. Returns null if the key does not exist in the table.
-
-###public V get(K key)
-Returns the value that corresponds to key. Returns null if the key does not exist in the table.
-
-###public boolean containsKey(K key)
-Returns whether or not key exists in the table.
-
-###public boolean containsValue(V value)
-Returns whether or not value exists in the table.
-
-###private class Entry\<K,V>
-Nested class used to hold key-value pairings. Should have appropriate constructors and accessors as necessary.
+public class HashTable<K,V>
+{
+	private double capacity = .6;
+	private int size;
+	private Entry<K,V>[] arr;
+	private int numOfOccupiedSpaces = 0;
+	private K k;
+	private V v;
+	
+	public HashTable()
+	{
+		arr = new Entry<K,V>[100];
+		size = 100;
+	}
+	
+	/**
+	Description 
+	:) @ param obj Object that represents the Object the user wants to put in the hash table
+	:) @ return 
+	*/
+	public void put(K k, V v)
+	{
+		Entry<K,V> entry = new Entry<K,V>(k,v);
+		int spot = Math.abs(k.hashCode());
+		while(arr[spot] != null)
+		{
+			spot++;
+		}
+		spot = spot % size;
+		arr[spot] = entry;
+		numOfOccupiedSpaces++;
+		if ((numOfOccupiedSpaces/size) >= .6)
+			rehash(); 
+	}
+	
+	private void rehash()
+	{
+		size = size*2;
+		Entry<K,V> arrCopy = new Entry<K,V>[size];
+		int i = 0;
+		while (i < arr.length)
+		{
+			arrCopy.put(arr[i].getKey(), arr[i].getValue());
+		}
+		arr = arrCopy;
+	}
+	
+	public String toString()
+	{
+		String strOfArr = "";
+		for (int i = 0; i < arr.length; i++)
+		{
+			strOfArr += arr[i].getValue().toString() + ", " + arr[i].getKey().toString();	
+		}
+		return strOfArr;
+	}
+	
+	public V remove(K key)
+	{
+		int spot = Math.abs(key.hashCode());
+		spot = spot % size;
+		if (!(arr[spot].getKey().equals(key)))
+		{
+			if (search(spot) != null)
+				return arr[search(spot)].getValue();
+			else
+				return null;
+		}
+	}
+	
+	public int search(K k, int position)
+	{
+		while (position < size)
+		{
+			if (arr[position].getKey().equals(k));
+				return position;
+		}
+		return null;	 
+	}
+	
+	public static void main(String [] args)
+	{
+		HashTable table = new HashTable();
+		arr.put("Asbds");
+		arr.put("hdjfsk");
+		arr.put("jkrkjs");
+		arr.put("dfsadsa");
+		arr.toString();
+	}
+	
+	private class Entry<K,V>
+	{
+		private K k;
+		private V v;
+		
+		public Entry(K k, V v)
+		{
+			K = k;
+			V = v;
+		}
+		
+		public K getKey()
+		{
+			return k;
+		}
+		
+		public V getValue()
+		{
+			return V;
+		}
+	}	
+}
 
 
 
