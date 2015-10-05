@@ -1,0 +1,185 @@
+//**
+*@version1.1
+*/
+
+public class HashTable2<K,V>
+{	
+	private Entry<K,V>[] table;
+
+	/** ratio of table that needs to be filled before rehash*/
+	private final double LOAD_FACTOR = 0.6;
+	private int size;
+	private int quantityFilled;
+	
+	/**
+	* Constructs an empty HashTable with an initial size 7.
+	*/ 
+	public HashTable2()
+	{
+		table = new Entry[7];
+		size = 7;
+		quantityFilled = 0;
+	}
+	
+	/**
+	*Places obj into the table based on it's hashValue.  If that position is already taken, will move to the 
+	*next available determined by quadratic probing to avoid clumping.  If the ratio of the HashTable filled
+	*exceeds the LOAD_FACTOR, rehashes.
+	*
+	*@param obj Inserts the specified object in the HashTable
+	*/
+	public void insert(Entry ent)
+	{
+		if(((double)(quantityFilled))/size >= LOAD_FACTOR)
+			rehash();				 
+		
+		int hashValue = ent.key.hashCode() % size;		
+		int quadVal = 1;
+		while(true)
+		{	
+			if(table[hashValue] == null)
+			{
+				table[hashValue] = ent;
+				quantityFilled ++;
+				break;
+			}
+			else 
+			{
+				hashValue = (ent.key.hashCode() + quadVal) % size;
+				quadVal *= 2;		
+			}
+		}
+		
+	}
+	
+	/**
+	*Returns string representation of Hashtable's values
+	*
+	*@return String representation of Hashtable's values
+	*/
+	public String toString()
+	{
+		String returnStr = "";
+		for(int i = 0; i < table.length; i++)
+		{
+			returnStr = returnStr + table[i].value;
+		}
+		return returnStr;
+	}
+	
+	private void rehash()
+	{
+		int n = 0;
+		for(int i = size + 1; ! isPrime(i); i++)
+		{
+			n = i + 1;
+		}
+			
+		Entry[] newHash = new Entry[n];
+		for(int i = 0; i < size; i++)
+		{
+			if(table[i] != null)
+			{
+				int hashValue = table[i].key.hashCode() % size;		
+				int quadVal = 1;
+				while(true)
+				{
+						if(newHash[hashValue] == null)
+						{
+							newHash[hashValue] = table[i];
+							break;
+						}
+						else
+						{
+							hashValue = (table[i].key.hashCode() + quadVal) % size;
+							quadVal *= 2;
+						}
+				}
+			}
+		}
+		table = newHash;
+		size = n;
+		
+	}
+	
+	/**
+	*Evaluates whether input int is prime.  Used for rehash, to avoid conflicts with quadratic probing.
+	*@param n int evaluated for primality.
+	*@return whether n is prime.
+	*/
+	private boolean isPrime(int n) //https://en.wikipedia.org/wiki/Primality_test#Pseudocode
+	{
+		if(n%2 == 0 || n%3 == 0)
+			return false;
+		int i = 5;
+		while(i*i <= n)
+		{
+			if(n % i == 0 || n % (i + 2) == 0)
+				return false;
+			i += 6;
+		}
+		return true;
+	}
+	
+	public V remove(K key)
+	{
+		if(table[key.hashCode() % size] == null  //returns null if key is not in hashTable
+			return null;
+		
+		int quadVal = 0;
+		findHash = key.hashCode();
+		Entry target; //value that remove will return
+		while(true)
+		{
+			if( table[(findHash + quadVal) % size].key.hashCode() == key.hashCode())
+			{
+				target = table[(findHash + quadVal) % size];   
+				table[(findHash + quadVal) % size] = null;
+				break
+			}
+			else
+			{
+				if(quadVal = 0)
+					quadVal = 1;
+				else
+					quadVal *= 2;
+			}
+				
+		}
+		
+		while(true)
+		{
+			quadVal *= 2; 
+			if(table[(findHash + quadVal) % size] != null)
+			{
+				
+			}
+		}
+	}
+
+	/**
+	*Data structure that associates keys with values
+	*
+	*@param <K> the key
+	*@param <V> the value
+	*/
+	private class Entry<K,V>
+	{
+		public K key;
+		public V value;
+	
+		/**
+		*Constructor for Entries
+		*
+		*@param k the key
+		*@param v the value
+		*/	
+		public Entry(K k, V v)
+		{
+			key = k;
+			value = v;
+		}
+	
+	
+	}
+}
