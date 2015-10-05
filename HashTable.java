@@ -1,6 +1,6 @@
 /**
  * @author Billy Fallon
- * @version 10/4/15
+ * @version 10/6/15
  */
 
 public class HashTable <K, V>
@@ -72,10 +72,10 @@ public class HashTable <K, V>
 					numFilled+=1;
 				}
 			}
-			if((numFilled/(double) table.length) >= LOAD_FACTOR)
-				reHash();
 				
 		}
+		if((numFilled/(double) table.length) >= LOAD_FACTOR)
+			reHash();
 		
 	}
 	
@@ -90,7 +90,10 @@ public class HashTable <K, V>
 		String str = "| ";
 		for(int i = 0; i<table.length; i++)
 		{
-			str = str + table[i].value + " | ";
+			if(table[i]!=null)
+				str = str + table[i].value + " | ";
+			else 
+				str = str + "null" + " | ";
 		}
 		return str;
 	}
@@ -118,19 +121,21 @@ public class HashTable <K, V>
 	 * Returns null if the key does not exist in the table.
 	 * 
 	 * @param key
-	 * @param value
-	 * @return void
+	 * @return V
 	 */
 	
-	public void remove(K key, V value)
+	public V remove(K key)
 	{
 		for(int i = 0; i<table.length; i++)
 		{
-			if(table[i]!=null&&table[i].key==key&&table[i].value==value)
+			if(table[i]!=null&&table[i].key==key)
 			{
+				V v = table[i].value;
 				table[i]=null;
+				return v;
 			}
 		}
+		return null;
 	}
 	/**
 	 * Returns the value that corresponds to key. Returns null if the 
@@ -189,6 +194,28 @@ public class HashTable <K, V>
 		return false;
 	}
 	
+	/**
+	 * Nested class used to hold key-value pairings. Should have appropriate constructors and accessors as necessary.
+	 */
+	@SuppressWarnings("hiding")
+	private class Entry <K,V>
+	{
+		public K key;
+		public V value;
+		/**
+		 * Initializes Entry Object
+		 * 
+		 * @param k
+		 * @param v
+		 */
+		public Entry (K k, V v)
+		{
+			key = k;
+			value = v;
+		}
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args)
 	{
@@ -212,29 +239,11 @@ public class HashTable <K, V>
 		System.out.println(table.containsValue(str2));
 		System.out.println(table);
 		System.out.println(table.get(str1));
-		
-			
+		System.out.println(table.containsKey(str1));
+		@SuppressWarnings("unused")
+		String str11 = (String) table.remove(str5);
+		System.out.println(table);	
 	}
 	
-	/**
-	 * Nested class used to hold key-value pairings. Should have appropriate constructors and accessors as necessary.
-	 */
-	@SuppressWarnings("hiding")
-	private class Entry <K,V>
-	{
-		public K key;
-		public V value;
-		/**
-		 * Initializes Entry Object
-		 * 
-		 * @param k
-		 * @param v
-		 */
-		public Entry (K k, V v)
-		{
-			key = k;
-			value = v;
-		}
-		
-	}
+	
 }
