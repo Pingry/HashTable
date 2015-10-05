@@ -11,13 +11,19 @@ public class HashTable <K, V>
 	 */
 	private Entry<K,V>[] table;
 	
+	private static final double LOAD_FACTOR = .6;
+	
+	private static double numFilled;
+	
 	/**
 	 * Default constructor. Initializes to capacity 100
 	 */
 	
+	@SuppressWarnings("unchecked")
 	public HashTable()
 	{
 		table = new Entry[100];
+		numFilled = 0;
 		
 	}
 	
@@ -27,9 +33,11 @@ public class HashTable <K, V>
 	 * @param int that is desired capacity of HashTable
 	 */
 	
+	@SuppressWarnings("unchecked")
 	public HashTable(int capacity)
 	{
 		table = new Entry[capacity];
+		numFilled = 0;
 	}
 	
 	/**
@@ -39,6 +47,7 @@ public class HashTable <K, V>
 	 * @param Object obj	
 	 * @return void
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
 	public void put (K key, V value)
 	{
 		Entry E = new Entry (key, value);
@@ -50,6 +59,7 @@ public class HashTable <K, V>
 		}
 		if(table[num]==null)
 		{
+			numFilled+=1;
 			table[num] = E;
 		}
 		else
@@ -59,12 +69,12 @@ public class HashTable <K, V>
 				if(table[i]==null)
 				{
 					table[i]=E;
-					return;
+					numFilled+=1;
 				}
 			}
-			int length = table.length;
-			reHash();
-			table[length] = E;
+			if((numFilled/(double) table.length) >= LOAD_FACTOR)
+				reHash();
+				
 		}
 		
 	}
@@ -92,6 +102,7 @@ public class HashTable <K, V>
 	 * 
 	 * @return void 
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void reHash()
 	{
 		Entry[] copy = new Entry[(table.length*2)];
@@ -120,6 +131,24 @@ public class HashTable <K, V>
 				table[i]=null;
 			}
 		}
+	}
+	/**
+	 * Returns the value that corresponds to key. Returns null if the 
+	 * key does not exist in the table.
+	 * 
+	 * @param key
+	 * @return V
+	 */
+	public V get (K key)
+	{
+		for(int i = 0; i<table.length; i++)
+		{
+			if(table[i]!=null&&table[i].key==key)
+			{
+				return table[i].value;
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -159,9 +188,38 @@ public class HashTable <K, V>
 		}
 		return false;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static void main(String[] args)
+	{
+		@SuppressWarnings("rawtypes")
+		HashTable table = new HashTable(5);
+		String str1 = "str1";
+		String str2 = "str2";
+		String str3 = "str3";
+		String str4 = "str4";
+		String str5 = "str5";
+		String str6 = "str6";
+		String str7 = "str7";
+		String str8 = "str8";
+		String str9 = "str9";
+		String str10 = "str10";
+		table.put(str1, str2);
+		table.put(str3, str4);
+		table.put(str5, str6);
+		table.put(str7, str8);
+		table.put(str9, str10);
+		System.out.println(table.containsValue(str2));
+		System.out.println(table);
+		System.out.println(table.get(str1));
+		
+			
+	}
+	
 	/**
 	 * Nested class used to hold key-value pairings. Should have appropriate constructors and accessors as necessary.
 	 */
+	@SuppressWarnings("hiding")
 	private class Entry <K,V>
 	{
 		public K key;
