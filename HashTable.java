@@ -51,12 +51,7 @@ public class HashTable <K, V>
 	public void put (K key, V value)
 	{
 		Entry E = new Entry (key, value);
-		int num = key.hashCode();
-		num=num%table.length;
-		if(num<0)
-		{
-			num+=table.length;
-		}
+		int num = Math.abs(key.hashCode()%table.length);
 		if(table[num]==null)
 		{
 			numFilled+=1;
@@ -125,19 +120,20 @@ public class HashTable <K, V>
 	 * @return V
 	 */
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public V remove(K key)
 	{
-		for(int i = 0; i<table.length; i++)
+		int hash = Math.abs(key.hashCode()%table.length), counter = hash;
+		Entry holder = new Entry ();
+		while(counter<table.length&&table[counter]!=null&&Math.abs(table[counter].key.hashCode()%table.length)==hash)
 		{
-			if(table[i]!=null&&table[i].key==key)
-			{
-				V v = table[i].value;
-				table[i]=null;
-				numFilled--;
-				return v;
-			}
+			if(table[counter].key==key)
+				holder = table[counter];
+			table[counter]=table[counter+1];
 		}
-		return null;
+		return (V) holder.value;
+		
+		
 	}
 	/**
 	 * Returns the value that corresponds to key. Returns null if the 
@@ -210,10 +206,19 @@ public class HashTable <K, V>
 		 * @param k
 		 * @param v
 		 */
+		
 		public Entry (K k, V v)
 		{
 			key = k;
 			value = v;
+		}
+		/**
+		 * Default constructor
+		 */
+		public Entry()
+		{
+			key = null;
+			value = null;
 		}
 		
 	}
