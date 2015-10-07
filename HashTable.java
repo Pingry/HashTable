@@ -125,11 +125,16 @@ public class HashTable <K, V>
 	{
 		int hash = Math.abs(key.hashCode()%table.length), counter = hash;
 		Entry holder = new Entry ();
+		boolean check = false;
 		while(counter<table.length&&table[counter]!=null&&Math.abs(table[counter].key.hashCode()%table.length)==hash)
 		{
 			if(table[counter].key==key)
+			{
 				holder = table[counter];
-			table[counter]=table[counter+1];
+				check = true;
+			}
+			if(check==true)
+				table[counter]=table[counter+1];
 		}
 		return (V) holder.value;
 		
