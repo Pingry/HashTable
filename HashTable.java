@@ -1,90 +1,210 @@
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * @author Kartikeya Sharma
  * @course Advanced Topics, Pingry
  * @version 9.30.15 / "Version 0"
+ * @description A hash table adds and removes objects in constant time. Each object is stored in the form of an entry, which is comprised of an inputted key and value.
  */
 
-import java.util.List;
-import java.util.ArrayList;
-
-public class HashTable{
+public class HashTable<K,V>{
   
      /** Number of items stored in the hash table **/
-     private int items;
+     private int count;
      /** Ratio of items to total hash table capacity before rehashing is needed **/
-     private static final double loadfactor = .5;
+     private double loadfactor = .5;
      /** The hash table **/
-     private Object[] table;
+     private Entry[] table;
     
+     /** Default construction of hash table of size 100. **/
      public HashTable(){
          this(100);
      }
     
+     /** Construction of hash table with capacity 100. 
+      *
+      * @param int capacity
+      */
+    
      public HashTable(int capacity){
-         items = 0;
-         table = new Object[capacity];
+         count = 0;
+         table = new Entry[capacity];
      }
     
     /**
-     * If the ratio of the items stored in the hash table and the capacity of the hash table exceed loadfactor ratio, table is rehashed.
-     * If the "hashed" index is available, the Object is put in the hash table at that index. Otherwise, the function uses quadratic
-     * probing to find the next available index in the hash table.
-     *
-     * @param Object obj: any object can be put into the hash table.
+     * Creates an Entry object with the passed in key-value pair and passes entry into putEntry to be stored into the hash table.
+     * 
+     * @param K key
+     * @param V value
      */
-    public void put(Object obj){
-         if ((double)items/table.length>=loadfactor){
-             rehash();
-         }
-         int index = (adder(obj.hashCode()))%table.length;
-         if (table[index]==null){
-             table[index] = obj;
-         }
-         else{
-            boolean stop = false;
-            int indexqp;
-            for (int iadd = 1; stop==true; iadd*=2){
-                indexqp = index+iadd;
-                if (table[indexqp]==null)
-                    table[indexqp]=obj;
-                    stop=true;
-            }
-         }
-         items+=1;
+    
+    public void put(K key, V value){
+         Entry<K,V> entry = new Entry(key, value);
+         putEntry(entry);
+    }
+     
+    /**
+     * Puts Entry e into the hash table.
+     * If the ratio of the items stored in the hash table and the capacity of the hash table exceed loadfactor ratio, the table is rehashed.
+     * If the "hashed" index is available, the Entry is put in the hash table at that index. Otherwise, the function sequentially
+     * finds the next available index in the hash table.
+     *
+     * @param Entry e: an Entry, consisting of a key and value, that will be put into the hash table.
+     */
+    
+    private void putEntry(Entry<K,V> entry){
+        if ((double)count/table.length>=loadfactor){
+            rehash();
+        }
+        int index = entry.getKey().hashCode()%table.length;
+        table[getNextAvailIndex(index)]=entry;
+        count+=1;
     }
     
-     /**
-      * Helper function of put(Object obj). Sums up the digits of the Object's hashcode.
-      *
-      * @param int num: the number whose digits are being summed up
-      */
-    
-     public int adder (int num){
-        int sum = 0;
-        int digit = 0;
-        while (num>0){
-            digit = num%10;
-            sum+=digit;
-            num/=10;
+    /**
+     * Helper function that receives the next available index to place an entry given an index. 
+     * Returns the same index if the index is already empty.
+     
+     * @param int index: the index being checked for availability to store an Entry object into the hash table.
+     */
+        
+    private int getNextAvailIndex(int index){
+        boolean stop = false;
+        while (stop==false){
+            if (table[index]==null){
+                return index;
+                stop=true;
+            }
+            if (index>=table.length){
+                index=-1;
+            }
+            index+=1;
         }
-         return sum;
-     }
+    }
     
+    /**
+     * Private class for hash table to associate key and value in an object format for convenient storage in hash table. Contains getter methods for both key and value.
+     */
+    
+    private class Entry<K,V>{
+        public K key;
+        public V value;
+        
+        public Entry(K k, V v){
+            key = k;
+            value = v;
+        }
+        
+        public K getKey(){
+            return key;
+        }
+        
+        public V getValue(){
+            return value;
+        }
+    }
+    
+    /**
+     * Removes the Entry containing the inputted key from the hash table and returns the value stored in that Entry object, i.e. the value corresponding to the key in the hash table.
+     *
+     * @param K key
+     */
+    
+    public V remove(K key){
+        if (get(key)==null){
+            return null;
+        }
+        else{
+            V storevalue = get(key);
+            table[keyIndexFinder(key)]=null;
+            return storevalue;
+        }
+    }
+    
+    /**
+     * Gets value of the corresponding key of an Entry object in hash table.
+     *
+     * @param K key
+     */
+    
+    public V get (K key){
+        if(keyIndexFinder(key)==-1){
+            return null;
+        }
+        else{
+            return table[keyIndexFinder(key)].getValue();
+        }
+    }
+    
+    /**
+     * Checks if key exists in an Entry object of hash table. Uses helper function keyIndexFinder; if keyIndexFinder returns -1, the index does
+     * not exist, in which case the function would return false. Else, containsKey returns true.
+     *
+     * @param K key
+     */
+    
+    public boolean containsKey(K key){
+        if (keyIndexFinder(key)==-1){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    
+    
+    /**
+     * Finds the index at which an Entry object containing key is located in the hash table.
+     *
+     * @param K key
+     */
+    
+    public int keyIndexFinder(K key){
+        boolean stop = false;
+        for (int index = key.hashCode()%table.length; stop==false; index++){
+            if (table[index].getKey().equals(key)){
+                return index;
+            }
+            else if (table[index]==null){
+                return -1;
+            }
+            if (index>=table.length){
+                index=-1;
+            }
+        }
+        return -1;
+    }
+    
+    /**
+     * Checks if value exists in an Entry object of hash table.
+     *
+     * @param V value
+     */
+    
+    public boolean containsValue(V value){
+        for (int index = 0; index<table.length; index++){
+            if (table[index].getValue().equals(value)){
+                return true;
+            }
+        }
+        return false;
+    }
      /**
       * Rehashes the entire table to a hash table with a doubled capacity.
       */
     
      public void rehash(){
-         Object[] oldtable = table;
-         table = new Object[table.length*2];
+         Entry[] oldtable = table;
+         table = new Entry[table.length*2];
          for (int i = 0; i<oldtable.length; i++){
-             put(oldtable[i]);
+             putEntry(oldtable[i]);
          }
      }
     
     
     /** 
-     * Returns string representation of each slot in the hash table with indexes corresponding to Object memory addresses, or, in the case of
+     * Returns String representation of each slot in the hash table with indexes corresponding to Object memory addresses, or, in the case of
      * an object like String, its toString() method.
      * If no Object exists in a slot in the hash table, null is returned alongside the index.
      */
