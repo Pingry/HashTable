@@ -1,6 +1,8 @@
 /**
-* This is a class that is a hashtable
+* This class is a hashtable to store objects through generic typing
 * A hashtable is similar to a dictionary in Python, as it has keys and values stored
+* Uses generics and key-value associations (dictionaries)
+* capability to add, remove, and locate specific spots in the hashtable
 * @author Anish Seth
 * @version 9.29.15
 */
@@ -39,6 +41,8 @@ public class HashTable<K,V>
 	/**
 	* Puts the object in the hashtable.
 	* Looks for corresponding spot to put the value in, if that value is taken, will go to next open space.
+	* Deals with collisions by incrementung by one, and putting value in next open spot
+	* Once the while loop has completed, if the percent of occupied spots in the hashtable is greater than the loadfactor, the table is rehashed
 	* @param key, value A key and its corresponding value that implements the hashCode() method
 	*/
 	public void put(K key, V value)
@@ -56,7 +60,7 @@ public class HashTable<K,V>
 			else
 				x++;
 			if(x == table.length)
-				x =0;
+				x = 0;
 		}
 		if((float)occupy/(float)table.length >= loadfactor)
 			rehash();
@@ -71,10 +75,10 @@ public class HashTable<K,V>
 		String x = " ";
 		for(int i = 0; i < table.length; i++)
 		{
-			if(table[i] == null)
-				x += "null\n";
+			if(table[i] != null)
+				x += table[i].value + " | ";
 			else
-				x += table[i].value + "\n"; 
+				x += "null | ";
 		}
 		return x;
 	}
@@ -84,11 +88,7 @@ public class HashTable<K,V>
 	private void rehash()
 	{
 		//x is a temporary copy of the hashtable
-		Entry[] x = new Entry[table.length];
-		for(int i = 0; i < table.length; i++)
-		{
-			x[i] = table[i];
-		}
+		Entry[] x = table;
 		//new hashtable with twice the capacity; copies back all the values from the tamporary array
 		table = new Entry[table.length*2];
 		for(int i = 0; i < table.length; i++)
@@ -106,7 +106,11 @@ public class HashTable<K,V>
 		int x = key.hashCode() % table.length;
 		for(int i = 0; i < table.length;i++)
 		{
-			if(x == (table[i].key.hashCode() % table.length))
+			if(table[i] == null)
+			{
+				return null;
+			}
+			else if(x == (table[i].key.hashCode() % table.length))
 			{
 				occupy--;
 				V remove = table[i].value;
@@ -136,20 +140,17 @@ public class HashTable<K,V>
 	}
 	/**
 	 * Returns whether or not key exists in the table.
-	 * @param Key the key
+	 * @param Key the key being looked for
 	 */
 	public boolean containsKey(K key)
 	{
-		for(int i = 0; i < table.length; i++)
-		{
-			if(key == table[i].key)
-				return true;
-		}
+		if(get(key) != null)
+			return true;
 		return false;
 	}
 	/**
 	 * Returns whether or not value exists in the table.
-	 * @param Value the value
+	 * @param Value the value being looked
 	 */
 	public boolean containsValue(V value)
 	{
