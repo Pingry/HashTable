@@ -6,19 +6,19 @@
 
 	@author Kevin Chow
 	@version 9.29.15
-	*/ 
+*/ 
 	
 import java.lang.Math;
 
 public class HashTable
 {
-	//Table in question
+	//Table Created
 	private Object[] table;
 	
-	//Size of table used various times by different methods. Is adjusted when needed.
-	private int tablesize;
+	//How many objects are in the table
+	private int tableoccupy;
 	
-	//My personally chosen lf
+	//Load Factor of the table
 	private double loadfactor = .7;
 	
 	/**
@@ -26,19 +26,16 @@ public class HashTable
 	*/
 	public HashTable()
 	{
-		table = new Object[100];
-		tablesize = 100;
-	
+		table = new Object[100];	
 	}
 	
 	/** 
 	* Constructor that lets the user specify initial size.
-	* @param capacity int that is the size of hash table wanted.
+	* @param capacity int that is the size of hash table.
 	*/
 	public HashTable(int capacity)
 	{
 		table = new Object[capacity];
-		tablesize = capacity;
 	}
 	
 	/**
@@ -48,7 +45,7 @@ public class HashTable
 	*/
 	public void put(Object obj)
 	{
-		int index = (Math.abs(obj.hashCode()))%tablesize;
+		int index = (Math.abs(obj.hashCode()))%table.length;
 		int tablefull = 0;
 		boolean added = false;
 		if (table[index] == null)
@@ -60,31 +57,25 @@ public class HashTable
 				if (table[index] == null)
 				{
 					table[index] = obj;
+					tableoccupy++;
 					added = true;
 				}
 				index++;
 				
 			}
 		}
-		for (int i = 0; i < tablesize; i++)
-		{
-			if (table[i] != null)
-				tablefull++;
-			
-		}
-		if(tablefull / tablesize >= loadfactor)
+		if(tableoccupy / table.length >= loadfactor)
 			rehash();
-	
 	}
 	
 	/**
 	* Creates a string representation of the hashtable
 	* @return string representation of hashtable
 	*/
-	public String toString()//String representation of the HashTable.
+	public String toString()
 	{
 		String stringofhashtable = "[";
-		for (int i = 0; i<tablesize; i++)
+		for (int i = 0; i<table.length; i++)
 		{
 			if (table[i]!=null)
 			{
@@ -107,15 +98,13 @@ public class HashTable
 	* called when calling put function makes the current fill of the HashTable 
 	* exceed the load factor.
 	*/
-	private void rehash() 
+	public void rehash() 
 	{
 		
-		Object[] holdertable = new Object[tablesize];
-		for (int i = 0; i < tablesize;i++)
-			holdertable[i]=table[i];
-		table = new Object[tablesize*2];
-		tablesize = tablesize*2;
-		for (int i = 0; i < tablesize;i++)
+		Object[] holdertable = new Object[table.length];
+		holdertable = table;
+		table = new Object[table.length*2];
+		for (int i = 0; i < holdertable.length;i++)
 		{
 			if (holdertable[i]!=null)
 				put(holdertable[i]);
@@ -123,4 +112,20 @@ public class HashTable
 	}
 
 }
+
+/*
+private void rehash() 
+	{
+		
+		Object[] holdertable = new Object[table.length];
+		for (int i = 0; i < table.length;i++)
+			holdertable[i]=table[i];
+		table = new Object[table.length*2];
+		for (int i = 0; i < table.length;i++)
+		{
+			if (holdertable[i]!=null)
+				put(holdertable[i]);
+		}
+	}
+*/
 
