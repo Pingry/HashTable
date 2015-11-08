@@ -1,0 +1,246 @@
+/**
+For this project we were asked to create a hash table of type Entry which included two
+generic types, K and V which were paired in the entry class as a key and a value. We were
+also asked to create a few methods that could be used to obtain information from the hash
+table as well as edit it 
+@author Yanni Angelides
+@version 10/8/15
+*/
+
+import java.lang.Math;
+
+public class HashTable<K,V>
+{
+	private double capacity = .6;
+	private int size;
+	private Entry[] arr;
+	private int numOfOccupiedSpaces = 0;
+	private K k;
+	private V v;
+	
+	public HashTable()
+	{
+		arr = new Entry[100]; //Default Constructor 
+		size = 100;
+	}
+	public HashTable(int i)
+	{
+		arr = new Entry[i]; //Constructor
+		size = i;
+	}
+	
+	/**
+	This functions creates a new array Entry object and places it in the correct
+	spot in the hash table based on the K parameters .hashCode() value. It also keeps
+	track of the number of spaces occupied in the hash table and calls rehash() if the
+	that number exceeds the capacity variable 
+	@ param Takes in generic Key K and generic Value V that the user wants to put in the
+			hash table
+	@ return void, puts k and v into the correct position in hash table 
+	*/
+	public void put(K k, V v)
+	{
+		Entry entry = new Entry(k,v);
+		int spot = Math.abs(k.hashCode());
+		spot = spot % size; 
+		while(arr[spot] != null)
+		{
+			if (spot == (size-1))
+			{
+				spot = 0;
+			}
+			spot++;
+		}
+		
+		arr[spot] = entry;
+		numOfOccupiedSpaces++;
+		if ((numOfOccupiedSpaces/size) >= capacity) // if percent of spaces occupied is
+			rehash(); 								// greater than capacity, need to rehash() table
+	}
+	
+	/**
+	This method increases the size of the array by times two in order to reduce the
+	number of collisions within the hash table. It then re-calculates the correct
+	positions of each object based on the new hash table size
+	@param none
+	@return void,
+	*/
+	private void rehash()
+	{
+		size = size*2;
+		Entry[] arrCopy = new Entry[size];
+		int i = 0;
+		while (i < arr.length)
+		{
+			put((K)(arr[i].getKey()), (V)(arr[i].getValue())); 
+		}						// re-calculating the correct positions for each Entry
+		arr = arrCopy;			// Object in hash table
+	}
+	
+	/**
+	This function takes the hash table and converts it into a String so that it can be 
+	printed
+	@param none
+	@return String representation of the hash table
+	*/
+	public String toString()
+	{
+		String strOfArr = "";
+		for (int i = 0; i < arr.length; i++)
+		{
+			if (arr[i] != null)
+			{
+				strOfArr += ((V)(arr[i].getValue())).toString() + ", " + ((K)(arr[i].getKey())).toString() + " | ";
+			}	
+		}
+		return strOfArr;
+	}
+	
+	/**
+	This function removes a certain Entry object from the hash table based on that Entry
+	Object's key
+	@param key of the Entry Object the user wants to be removed from the hash table
+	@return the value of the Entry Object the user wanted removed from the hash table
+	*/
+	public V remove(K key)
+	{
+		int spot = Math.abs(key.hashCode());
+		spot = spot % size;
+		V value = (V)(arr[spot].getValue());
+		int i = 0;
+		if (!((K)(arr[spot].getKey())).equals(key))
+		{
+			int searchVal = search(key, spot);
+			if (searchVal != -1)
+			{
+				value = (V)arr[searchVal].getValue(); //saving value before it
+				arr[searchVal] = null;                // is removed from hash table
+				i = searchVal;
+				while (arr[i] != null) //rehashing all the Objects after the Object 
+				{					   //that was removed until a null space is reached so that hash table won't crash
+					put((K)(arr[i].getKey()), (V)(arr[i].getValue()));
+					i++;
+				}
+				return value;
+			}
+			else
+			{
+				return null;
+			}
+		}
+		arr[search(key, spot)] = null;
+		while (arr[i] != null)
+		{
+			put((K)(arr[i].getKey()), (V)(arr[i].getValue())); //same code as above
+			i++;
+		}
+		return value;
+	}
+	
+	/**
+	This method gets the value of the Entry Object in the hash table that has the k
+	entered as parameter
+	@param key of the Entry Object the user wants to get
+	@return value that corresponds to the Entry Object the user wants to get
+	*/
+	public V get(K k)
+	{
+		int spot = Math.abs(k.hashCode());
+		if(search(k, spot) != -1)
+			return (V)(arr[search(k,spot)].getValue());
+		else
+			return null;		
+	}
+	
+	/**
+	This method checks if the key entered as a parameter is in the hash table
+	@param k, key that the user wants to check is in the hash table
+	@return boolean, tell user whether the key is or isn't in the hash table
+	*/
+	public boolean containsKey(K k)
+	{
+		if(get(k) != null) //Use get method because it doubles as a function to check
+		{				   //if a certain K is in the hash table
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	/**
+	This method checks if the value entered as a parameter is in the hash table
+	@ param v, value that the user wants to check is in the hash table
+	@ return boolean, tell user whether the value is or isn't in the hash table
+	*/
+	public boolean containsValue(V v)
+	{
+		for(int i = 0; i < size; i++)
+		{
+			if (arr[i] != null)
+			{
+				if(((V)(arr[i].getValue())).equals(v))
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	This is a helper method that is used by many of the above methods to figure out where
+	a certain key is if it is not, for collision in the position in the hash table that 
+	corresponds with its .hashCode() value for collision reasons
+	@ param K k - the key the user wants to find in the hash table, int - the position the
+	key is supposed to be in and therefore the place the search method should start
+	looking for it 
+	*/
+	public int search(K k, int position)
+	{
+		for (int j = position; j < size; j++)
+		{
+			if (arr[j] != null)
+			{
+				if (((K)(arr[j].getKey())).equals(k))
+					return j;
+			}
+		}
+		for (int i = 0; i < size; i++)
+		{
+			if (arr[i] != null)
+			{
+				if (((K)(arr[i].getKey())).equals(k))
+					return i;
+			}
+		}
+		return -1;	 
+	}
+	
+	/**
+	The purpose of this class is to link a key to a value so that when you are looking
+	for a value in the hash table you don't need that whole value because with values with
+	a lot of information that would be silly. All you would need is the key that is linked
+	to that value to find the value itself 
+	*/	
+	private class Entry<K,V>
+	{
+		private K k;
+		private V v;
+		
+		public Entry(K k, V v)
+		{
+			this.k = k;
+			this.v = v;
+		}
+		
+		public K getKey()
+		{
+			return k;
+		}
+		
+		public V getValue()
+		{
+			return v;
+		}
+	}	
+}
